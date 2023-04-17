@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Payment Success</title>
+	<style>
+		body {
+			font-family: Arial, sans-serif;
+			background-color: #f2f2f2;
+		}
+		.container {
+			max-width: 800px;
+			margin: 0 auto;
+			padding: 40px;
+			background-color: #fff;
+			box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+		}
+		h1 {
+			font-size: 36px;
+			color: #4CAF50;
+			margin-top: 0;
+		}
+		p {
+			font-size: 20px;
+			margin: 10px 0;
+		}
+		ul {
+			list-style-type: none;
+			padding: 0;
+			margin: 0;
+		}
+		li {
+			font-size: 18px;
+			margin: 10px 0;
+		}
+		.info-row {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			background-color: #f2f2f2; /* add a light gray background color */
+			padding: 10px;
+			border-radius: 10px;
+			animation: fade-in 1s ease-in-out; /* add a fade-in animation */
+			margin-bottom: 15px;
+			font-weight: 600;
+		  }
+		  
+		  .info-item {
+			font-size: 14px;
+			padding: 5px;
+			color: #333; /* add a dark gray text color */
+		  }
+		  
+		  .info-item:first-of-type {
+			color: #0066cc; /* add a blue color to the first item */
+		  }
+		  
+		  .info-item:nth-of-type(2) {
+			color: #ff6600; /* add an orange color to the second item */
+		  }
+		  
+		  .info-item:last-of-type {
+			color: #66cc33; /* add a green color to the last item */
+		  }
+		  
+		  @keyframes fade-in {
+			0% {
+			  opacity: 0;
+			}
+			100% {
+			  opacity: 1;
+			}
+		  }
+
+		  .btn {
+			display: inline-block;
+			padding: 12px 24px;
+			font-size: 16px;
+			font-weight: bold;
+			text-align: center;
+			text-transform: uppercase;
+			color: #fff;
+			background-color: #3498db;
+			border: none;
+			border-radius: 6px;
+			box-shadow: 0 3px 6px rgba(0, 0, 0, 0.16);
+			transition: all 0.2s ease-in-out;
+			cursor: pointer;
+		  }
+		
+		  .btn:hover {
+			background-color: #2980b9;
+			transform: translateY(-3px);
+			box-shadow: 0 6px 12px rgba(0, 0, 0, 0.24);
+		  }
+	</style>
+	<script>
+		function success()
+		{
+			{%if id%}
+				var item = '{{order.items_json}}';
+				var cart = JSON.parse(item.replace(/(&quot\;)/g,"\""));
+				console.log("YES");
+				console.log(cart);
+				var mystr="";
+				for (item in cart) {
+					let name = cart[item][1];
+					let qty = cart[item][0];
+					let price = cart[item][2];
+					mystr += `<li><div class="info-row">
+						<span class="info-item">${name}</span>
+						<span class="info-item">${qty}</span>
+						<span class="info-item">${price}</span>
+					  </div>
+				</li>`
+				}
+				document.getElementById('items').innerHTML=mystr;
+				alert("Order id is {{id}}. Track Your Order with the id at our tracker page!");
+				localStorage.clear();
+			{%endif%}
+			order_json = localStorage.getItem('order');
+			console.log(order_json);
+			orderplace.order.value = order_json;
+			
+		}
+	  </script>
+</head>
+<body onload="success();">
+    {%if success%}
+	<div class="container">
+		<h1>Payment Successful!</h1>
+		<p>Thank you for your payment.</p>
+		<p>We have received your payment and your order will be shipped soon.</p>
+		<h2>Order id is {{id}}. Track Your Order with the id at our tracker page!</h2>
+
+		<ul id="items"> </ul>
+
+		<div class="info-row">
+			<span class="info-item">Total Amount</span>
+			<span class="info-item"></span>
+			<span class="info-item">{{order.amount}}</span>
+		  </div>
+
+		{% if not id %}
+        <form name="orderplace" method="post" action="">{% csrf_token %}
+            <input type="hidden" name="order" id="order">
+            <button type="submit">GET ORDER DETAILS</button>
+        </form>
+		{%endif%}
+
+		<a href="/"><button class='btn'>Return to homepage</button></a>    
+	</div>
+    {%else%}
+
+    <div class="container">
+		<h1 style="color:orange;">Payment Failed!</h1>
+		<p>We're sorry, but your payment was not processed successfully.</p>
+		<p>Please try again or contact customer support if you continue to experience issues.</p>
+        <a href="/"><button>Return to homepage</button></a>
+	</div>
+
+    {%endif%}
+</body>
+</html>

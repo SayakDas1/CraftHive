@@ -1,0 +1,32 @@
+{% extends 'shop/basic.html' %}
+{% block title%} Seller : {{request.user}}{% endblock %}
+{% block body %}
+
+    {% for i in products %}
+        <div class="align-items-center p-2 mx-3 my-1 rounded shadow-sm" style="background-color:#00C9A7; color:#FAEAFF;">
+            <h5>{{i.product_name}} (Stock : {{i.stock}})
+                <a href="/products/{{i.id}}"
+                <button class="btn btn-primary">Quick View</button></a>
+
+                <form action="" method="post" onsubmit="sure();" name="stock">
+                {% csrf_token %}
+                Update Stock? <input type="number" min="0" name="stocks" id="stocks">
+                <input type="hidden" name="prodid" value={{i.id}}>
+                <button type="submit" class="sell" id="{{i.id}}">Update</button>
+                </form>
+            </h5>
+            
+        </div>
+    {% endfor %}
+{% endblock %}
+{%block js%}
+<script>
+    function sure(){
+        var conf = confirm('Are you sure you want to proceed with updating the stock?');
+        if(conf!=true){
+            event.preventDefault();  
+        }
+            
+    }
+</script>
+{%endblock%}
